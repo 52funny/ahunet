@@ -1,2 +1,5 @@
 
 ahunet.exe
+dist/
+
+.goreleaser.yaml
