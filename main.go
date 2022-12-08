@@ -26,6 +26,9 @@ type Ahunet struct {
 func NewAhuNet(username, password string) Ahunet {
 	client := &http.Client{
 		Timeout: time.Second * 10,
+		Transport: &http.Transport{
+			Proxy: nil,
+		},
 	}
 	return Ahunet{
 		Username: username,
