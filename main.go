@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -46,7 +46,7 @@ func (ahu *Ahunet) GetIpv4Info() string {
 		return ""
 	}
 	defer resp.Body.Close()
-	bs, err := ioutil.ReadAll(resp.Body)
+	bs, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Errorln("read stream body err:", err)
 		return ""
@@ -54,7 +54,6 @@ func (ahu *Ahunet) GetIpv4Info() string {
 	s := dealJsonP(*(*string)(unsafe.Pointer(&bs)))
 	ipv4 := gjson.Get(s, "v46ip").String()
 	return ipv4
-
 }
 
 // authentication
@@ -70,13 +69,14 @@ func (ahu *Ahunet) Auth(ipv4 string) {
 	q.Add("wlan_user_ipv6", "")
 	q.Add("wlan_user_mac", "000000000000")
 	q.Add("wlan_ac_ip", "")
+
 	resp, err := ahu.client.Get(ahu.base + ":801/eportal/?" + q.Encode())
 	if err != nil {
 		logrus.Errorln("auth error:", err)
 		return
 	}
 	defer resp.Body.Close()
-	bs, err := ioutil.ReadAll(resp.Body)
+	bs, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Errorln("read stream body err:", err)
 	}
